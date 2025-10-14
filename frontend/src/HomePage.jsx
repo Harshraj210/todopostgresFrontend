@@ -4,24 +4,24 @@ import { motion, AnimatePresence } from "framer-motion";
 import TodoItem from "./components/TodoItem";
 
 // --- API Functions ---
-const apiClient = axios.create({ baseURL: "http://localhost:3001/api/todos" });
+const apiClient = axios.create({ baseURL: "https://todo-postgres-backend.vercel.app/api/v1" });
 const getTodos = async () => {
-  const response = await apiClient.get("/");
+  const response = await apiClient.get("/todos");
   return response.data;
 };
 
 const createTodo = async (todoData) => {
-  const response = await apiClient.post("/", todoData);
+  const response = await apiClient.post("/todos", todoData);
   return response.data;
 };
 
 const updateTodo = async (id, updateData) => {
-  const response = await apiClient.put(`/${id}`, updateData);
+  const response = await apiClient.put(`/todos/:${id}`, updateData);
   return response.data;
 };
 
 const deleteTodo = async (id) => {
-  const response = await apiClient.delete(`/${id}`);
+  const response = await apiClient.delete(`/todos/:${id}`);
   return response.data;
 };
 

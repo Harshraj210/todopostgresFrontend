@@ -19,7 +19,7 @@ function TodoItem({ todo, onUpdate, onDelete }) {
           onKeyDown={(e) => e.key === 'Enter' && handleSave()} autoFocus
           className="flex-grow text-lg bg-transparent text-gray-900 dark:text-white focus:outline-none"
         />
-        <button onClick={handleSave} className="px-4 py-2 text-sm font-semibold text-white bg-green-500 rounded-md hover:bg-green-600">Save</button>
+        <button onClick={handleSave} className="px-4 py-2 text-sm font-semibold text-white bg-green-500 rounded-md hover:bg-green-700">Save</button>
       </div>
     );
   }
@@ -41,4 +41,4 @@ function TodoItem({ todo, onUpdate, onDelete }) {
   );
 }
 
-export default TodoItem;
+export default TodoItem;
