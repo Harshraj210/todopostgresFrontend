@@ -40,6 +40,7 @@ function LoginPage() {
         localStorage.setItem("authToken", response.data.token);
         navigate("/"); // Redirect to the homepage
       }
+      alert("now do your tasks buddy")
     } catch (err) {
       console.error("Login failed:", err);
       setError("Login failed. Please check your email and password.");
