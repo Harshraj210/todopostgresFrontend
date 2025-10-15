@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { Link,useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import axios from 'axios';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import axios from "axios";
 
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
-    opacity: 1, y: 0,
-    transition: { delayChildren: 0.3, 
-      staggerChildren: 0.2 },
+    opacity: 1,
+    y: 0,
+    transition: { delayChildren: 0.3, staggerChildren: 0.2 },
   },
 };
 
@@ -18,32 +18,32 @@ const itemVariants = {
 };
 
 function LoginPage() {
- const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState(null); 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
   const navigate = useNavigate(); //
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-     setError(null);
-     try {
-      
-      const response = await axios.post('http://localhost:3000/api/v1/users/login', {
-        email,
-        password,
-      });
+    setError(null);
+    try {
+      const response = await axios.post(
+        "https://todo-postgres-backend.vercel.app/api/v1/users/login",
+        {
+          email,
+          password,
+        }
+      );
 
-      // 5. On success, save the token and redirect
+      
       if (response.data.token) {
-        localStorage.setItem('authToken', response.data.token);
-        navigate('/'); // Redirect to the homepage
+        localStorage.setItem("authToken", response.data.token);
+        navigate("/"); // Redirect to the homepage
       }
     } catch (err) {
-      console.error('Login failed:', err);
-      setError('Login failed. Please check your email and password.');
+      console.error("Login failed:", err);
+      setError("Login failed. Please check your email and password.");
     }
-  
-    
   };
 
   return (
@@ -60,25 +60,43 @@ function LoginPage() {
         >
           Welcome Back
         </motion.h1>
-        
-        <motion.form onSubmit={handleSubmit} className="mt-8 space-y-6" variants={itemVariants}>
+
+        <motion.form
+          onSubmit={handleSubmit}
+          className="mt-8 space-y-6"
+          variants={itemVariants}
+        >
           <div className="relative">
             <input
-              type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               className="peer w-full p-4 text-lg bg-transparent border-b-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500"
               placeholder="Email"
             />
-            <label htmlFor="email" className="absolute left-0 -top-3.5 text-gray-600 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-5 peer-focus:-top-3.5 peer-focus:text-blue-500 peer-focus:text-sm">
+            <label
+              htmlFor="email"
+              className="absolute left-0 -top-3.5 text-gray-600 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-5 peer-focus:-top-3.5 peer-focus:text-blue-500 peer-focus:text-sm"
+            >
               Email
             </label>
           </div>
           <div className="relative">
             <input
-              type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
               className="peer w-full p-4 text-lg bg-transparent border-b-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500"
               placeholder="Password"
             />
-            <label htmlFor="password" className="absolute left-0 -top-3.5 text-gray-600 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-5 peer-focus:-top-3.5 peer-focus:text-blue-500 peer-focus:text-sm">
+            <label
+              htmlFor="password"
+              className="absolute left-0 -top-3.5 text-gray-600 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-5 peer-focus:-top-3.5 peer-focus:text-blue-500 peer-focus:text-sm"
+            >
               Password
             </label>
           </div>
@@ -92,15 +110,22 @@ function LoginPage() {
             Login
           </motion.button>
         </motion.form>
-        
-        <motion.p className="mt-6 text-center text-gray-600 dark:text-gray-400" variants={itemVariants}>
-          Don't have an account? <Link to="/signup" className="font-medium text-blue-500 hover:underline">Sign Up</Link>
+
+        <motion.p
+          className="mt-6 text-center text-gray-600 dark:text-gray-400"
+          variants={itemVariants}
+        >
+          Don't have an account?{" "}
+          <Link
+            to="/signup"
+            className="font-medium text-blue-500 hover:underline"
+          >
+            Sign Up
+          </Link>
         </motion.p>
       </motion.div>
     </div>
   );
 }
-
-
 
 export default LoginPage;

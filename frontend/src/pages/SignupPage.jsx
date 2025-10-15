@@ -1,13 +1,14 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import * as authService from '../api/authService';
+import { useState } from "react";
 
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import axios from "axios";
 
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
-    opacity: 1, y: 0,
+    opacity: 1,
+    y: 0,
     transition: { delayChildren: 0.3, staggerChildren: 0.2 },
   },
 };
@@ -18,14 +19,33 @@ const itemVariants = {
 };
 
 function SignupPage() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = (event) => {
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Attempting to sign up with:", { username, email, password });
-   
+    setError(null); // Clear previous errors
+
+    try {
+      await axios.post(
+        "https://todo-postgres-backend.vercel.app/api/v1/users/signup",
+        {
+          name,
+          email,
+          password,
+        }
+      );
+
+      alert("Signup successful! Please proceed to login.");
+      navigate("/login"); // Redirect to the login page on success
+    } catch (err) {
+      console.error("Signup failed:", err);
+      setError("Signup failed. The email may already be in use.");
+    }
   };
 
   return (
@@ -42,35 +62,60 @@ function SignupPage() {
         >
           Create Your Account
         </motion.h1>
-        
-        <motion.form onSubmit={handleSubmit} className="mt-8 space-y-6" variants={itemVariants}>
+
+        <motion.form
+          onSubmit={handleSubmit}
+          className="mt-8 space-y-6"
+          variants={itemVariants}
+        >
           <div className="relative">
             <input
-              type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} required
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
               className="peer w-full p-4 text-lg bg-transparent border-b-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500"
-              placeholder="Username"
+              placeholder="Name"
             />
-            <label htmlFor="username" className="absolute left-0 -top-3.5 text-gray-600 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-5 peer-focus:-top-3.5 peer-focus:text-blue-500 peer-focus:text-sm">
-              Username
+            <label
+              htmlFor="name"
+              className="absolute left-0 -top-3.5 text-gray-600 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-5 peer-focus:-top-3.5 peer-focus:text-blue-500 peer-focus:text-sm"
+            >
+              Name
             </label>
           </div>
           <div className="relative">
             <input
-              type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               className="peer w-full p-4 text-lg bg-transparent border-b-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500"
               placeholder="Email"
             />
-            <label htmlFor="email" className="absolute left-0 -top-3.5 text-gray-600 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-5 peer-focus:-top-3.5 peer-focus:text-blue-500 peer-focus:text-sm">
+            <label
+              htmlFor="email"
+              className="absolute left-0 -top-3.5 text-gray-600 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-5 peer-focus:-top-3.5 peer-focus:text-blue-500 peer-focus:text-sm"
+            >
               Email
             </label>
           </div>
           <div className="relative">
             <input
-              type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
               className="peer w-full p-4 text-lg bg-transparent border-b-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500"
               placeholder="Password"
             />
-            <label htmlFor="password" className="absolute left-0 -top-3.5 text-gray-600 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-5 peer-focus:-top-3.5 peer-focus:text-blue-500 peer-focus:text-sm">
+            <label
+              htmlFor="password"
+              className="absolute left-0 -top-3.5 text-gray-600 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-5 peer-focus:-top-3.5 peer-focus:text-blue-500 peer-focus:text-sm"
+            >
               Password
             </label>
           </div>
@@ -84,9 +129,20 @@ function SignupPage() {
             Create Account
           </motion.button>
         </motion.form>
-        
-        <motion.p className="mt-6 text-center text-gray-600 dark:text-gray-400" variants={itemVariants}>
-          Already have an account? <Link to="/login" className="font-medium text-blue-500 hover:underline">Login</Link>
+
+        {error && <p className="mt-4 text-center text-red-500">{error}</p>}
+
+        <motion.p
+          className="mt-6 text-center text-gray-600 dark:text-gray-400"
+          variants={itemVariants}
+        >
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="font-medium text-blue-500 hover:underline"
+          >
+            Login
+          </Link>
         </motion.p>
       </motion.div>
     </div>

@@ -4,7 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import TodoItem from "./components/TodoItem";
 
 // --- API Functions ---
-const apiClient = axios.create({ baseURL: "https://todo-postgres-backend.vercel.app/api/v1" });
+const apiClient = axios.create({
+  baseURL: "https://todo-postgres-backend.vercel.app/api/v1",
+});
 const getTodos = async () => {
   const response = await apiClient.get("/todos");
   return response.data;
@@ -36,8 +38,22 @@ function HomePage() {
       try {
         setError(null);
         setIsLoading(true);
-        const fetchedTodos = await getTodos();
-        setTodos(fetchedTodos);
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          setError("You must be logged in to see your to-dos.");
+          setIsLoading(false);
+          return;
+        }
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        const response = await axios.get(
+          "https://todo-postgres-backend.vercel.app/api/v1/todos",
+          config
+        );
+        setTodos(response.data);
       } catch (err) {
         setError("Could not fetch to-dos.");
       } finally {
@@ -120,7 +136,7 @@ function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, x: -50, transition: { duration: 0.3 } }}
-              className="p-1" // Add padding to parent to prevent child margin collapse
+              className="p-1"
             >
               <TodoItem
                 todo={todo}
@@ -134,7 +150,5 @@ function HomePage() {
     </motion.div>
   );
 }
-// You'll need to re-add the API functions here if you removed them
-// const getTodos = async () ... etc.
 
 export default HomePage;
